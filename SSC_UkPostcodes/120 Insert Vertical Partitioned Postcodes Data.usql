@@ -1,0 +1,25 @@
+﻿USE DATABASE UkPostcodes;
+  USE SCHEMA Postcodes;
+  
+  DECLARE @DataFilePath string = "/ssc_uk_postcodes/postcodes/Postcodes.csv";
+  
+  @postcodes =
+  EXTRACT Postcode string,
+  CountyCode string,
+  DistrictCode string,
+  CountryCode string,
+  Latitude decimal?,
+  Longitude decimal?
+  FROM @DataFilePath
+  USING Extractors.Csv();
+  
+  INSERT INTO Postcodes_VerticalPartitioning
+  //ON INTEGRITY VIOLATION IGNORE //This statement ignores all integrity violations discarding them.  use with caution
+  ON INTEGRITY VIOLATION MOVE TO PARTITION ("UNKNOWN")
+  SELECT Postcode,
+  CountyCode,
+  DistrictCode,
+  CountryCode,
+  Latitude,
+  Longitude
+  FROM @postcodes;

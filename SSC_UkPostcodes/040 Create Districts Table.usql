@@ -1,0 +1,9 @@
+﻿USE DATABASE UkPostcodes;
+
+CREATE TABLE IF NOT EXISTS Postcodes.Districts
+(
+DistrictCode string,
+DistrictName string
+);
+CREATE CLUSTERED INDEX idx_Districts ON Postcodes.Districts (DistrictCode)
+DISTRIBUTED BY HASH (DistrictCode);
